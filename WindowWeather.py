@@ -16,9 +16,9 @@ from threading import Timer
 
 #wio_link_server = "wss://cn.iot.seeed.cc/v1/node/event"
 #This key is used for weather and ranger sensor and recoder
-wio_link_key = "access_token=350635f99206b9713e5eb8dd694380ca"  
+wio_link_key = "access_token=xxxxx"  
 
-wio_link_key2 = "access_token=7833b1f6ce1e66595aa63d7655c779a2"
+wio_link_key2 = "access_token=xxxxx"
 
 YellowLed = "555500"
 BlueLed   = "000055"
@@ -39,6 +39,7 @@ Wio_link_recoder = "https://cn.iot.seeed.cc/v1/node/GroveRecorderD1/play_once?" 
 Wio_link_ranger  = "https://cn.iot.seeed.cc/v1/node/GroveUltraRangerD2/range_in_cm?" + wio_link_key
 weather_desc = "Unknow"                  # General description of the weather
 Last_weather_desc = "UnKnow"
+Last_temp    = None
 tempOut      = "Unknow"                  # Temperature in C
 pressure     = "Unknow"                  # Pressure in hPa
 humidity     = "Unknow"                  # Humidity %
@@ -50,15 +51,6 @@ Task2        = None
 TimeInterval1 = 10  #  update weather data time interval  unit second
 TimeInterval2 = 10   #  update time data interval          unit second
 TimeOutIndex = 0  # To Count how many times post url error
-#weatherStatus = { 
-#                 "Rain":"???????꣬??Ҫ???˴?ɡ??",\
-#                 "Clouds":"???????ƣ??????һ???ϣ?????и??????顣",\
-#                 "Haze":"??????????????Ҫ???˴?????Ŷ??",\
-#                 "Drizzle":"??????ëë?꣬???????????¸???ͣ??",\
-#                 "Clear":"?????????治????????????ȥԼ???ء?",\
-#                 "Mist":"?????е?????????Ҫ??һ?㣬??????û??",\
-#                 "UnKonw":"?Ҳ?֪??????????????????ô˵???????Ұɡ?"
-#                }
 
 # weather information
 city="shenzhen"
@@ -75,8 +67,10 @@ url = "http://api.openweathermap.org/data/2.5/weather?q=" + city + "&APPID=" + a
 
 
 def updateWeather():
-    global weather_desc,tempOut,pressure,humidity,wind_speed,weather_Status,Last_weather_desc
+    global weather_desc,tempOut,pressure,humidity,wind_speed,weather_Status,Last_weather_desc,Last_temp
     try:
+    	Last_temp = tempOut
+    	
         jsonurl = urllib.urlopen(url)                      # open the url
         text = json.loads(jsonurl.read())
     
@@ -89,10 +83,13 @@ def updateWeather():
         wind_speed=text["wind"]["speed"]                   # Wind speed mps
 
         print weather_desc,tempOut,pressure,humidity,wind_speed
-        temp = str(int(tempOut) - 6)
-        print temp
-        Wio_link_test = "https://cn.iot.seeed.cc/v1/node/GroveLedWs2812D0/clear/" + temp + " /551100?access_token=7833b1f6ce1e66595aa63d7655c779a2"
-        UrlPost(Wio_link_test)
+        if Last_temp != tempOut:
+            temp = str(int(tempOut) - 5)
+            Wio_link_test = "https://cn.iot.seeed.cc/v1/node/GroveLedWs2812D0/clear/30/000000?access_token=7833b1f6ce1e66595aa63d7655c779a2"
+            UrlPost(Wio_link_test)  # clear all the rgb led first
+            print temp
+            Wio_link_test = "https://cn.iot.seeed.cc/v1/node/GroveLedWs2812D0/clear/" + temp + " /551100?access_token=7833b1f6ce1e66595aa63d7655c779a2"
+            UrlPost(Wio_link_test)
     # update the temperature rgb led
     #Wio_link_temperature = "https://cn.iot.seeed.cc/v1/node/GroveLedWs2812D0/clear/" + temp + "/" + RedLed + wio_link_key2
     #UrlPost(Wio_link_temperature)
