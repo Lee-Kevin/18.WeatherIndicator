@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 #This is a demo using Wio Link by Kevin Lee
@@ -16,30 +16,38 @@ from threading import Timer
 
 #wio_link_server = "wss://cn.iot.seeed.cc/v1/node/event"
 #This key is used for weather and ranger sensor and recoder
-wio_link_key = "access_token=xxxxx"  
+wio_link_key = "access_token=3988a8947d9a85a0c6957710f73bdafc"  
 
-wio_link_key2 = "access_token=xxxxx"
+wio_link_key2 = "access_token=7833b1f6ce1e66595aa63d7655c779a2"
 
 YellowLed = "555500"
 BlueLed   = "000055"
 RainLed   = "002341"
 WindLed   = "551200"
 RedLed    = "330000"
-Wio_link_ClearLed_Url = "https://cn.iot.seeed.cc/v1/node/GroveLedWs2812D0/clear/50/000000?" + wio_link_key
-Weather_Clear_Url     = "https://cn.iot.seeed.cc/v1/node/GroveLedWs2812D0/segment/0/" + YellowLed*12 + "?" +  wio_link_key
-Weather_Cloud_Url     = "https://cn.iot.seeed.cc/v1/node/GroveLedWs2812D0/segment/12/" + BlueLed*12 + "?" +  wio_link_key
-Weather_Rain_Url     = "https://cn.iot.seeed.cc/v1/node/GroveLedWs2812D0/segment/24/" + RainLed*12 + "?" +  wio_link_key
-Weather_Wind_Url     = "https://cn.iot.seeed.cc/v1/node/GroveLedWs2812D0/segment/36/" + WindLed*12 + "?" +  wio_link_key
+# Wio_link_ClearLed_Url = "https://cn.iot.seeed.cc/v1/node/GroveLedWs2812D0/clear/50/000000?" + wio_link_key
+# Weather_Clear_Url     = "https://cn.iot.seeed.cc/v1/node/GroveLedWs2812D0/segment/0/" + YellowLed*12 + "?" +  wio_link_key
+# Weather_Cloud_Url     = "https://cn.iot.seeed.cc/v1/node/GroveLedWs2812D0/segment/12/" + BlueLed*12 + "?" +  wio_link_key
+# Weather_Rain_Url     = "https://cn.iot.seeed.cc/v1/node/GroveLedWs2812D0/segment/24/" + RainLed*12 + "?" +  wio_link_key
+# Weather_Wind_Url     = "https://cn.iot.seeed.cc/v1/node/GroveLedWs2812D0/segment/36/" + WindLed*12 + "?" +  wio_link_key
+
+Wio_link_ClearLed_Url = "https://cn.wio.seeed.io/v1/node/GroveLedWs2812D0/clear/50/000000?" + wio_link_key
+Weather_Clear_Url     = "https://cn.wio.seeed.io/v1/node/GroveLedWs2812D0/segment/0/" + YellowLed*12 + "?" +  wio_link_key
+Weather_Cloud_Url     = "https://cn.wio.seeed.io/v1/node/GroveLedWs2812D0/segment/12/" + BlueLed*12 + "?" +  wio_link_key
+Weather_Rain_Url     = "https://cn.wio.seeed.io/v1/node/GroveLedWs2812D0/segment/24/" + RainLed*12 + "?" +  wio_link_key
+Weather_Wind_Url     = "https://cn.wio.seeed.io/v1/node/GroveLedWs2812D0/segment/36/" + WindLed*12 + "?" +  wio_link_key
+
+
 
 # Wio_link_temperature = "https://cn.iot.seeed.cc/v1/node/GroveLedWs2812D0/clear/30/" + RedLed + "?" + wio_link_key2
 
-Wio_link_test = "https://cn.iot.seeed.cc/v1/node/GroveLedWs2812D0/clear/25/005500?access_token=7833b1f6ce1e66595aa63d7655c779a2"
+Wio_link_test = "https://cn.wio.seeed.io/v1/node/GroveLedWs2812D0/clear/25/005500?"+wio_link_key2
 
-Wio_link_recoder = "https://cn.iot.seeed.cc/v1/node/GroveRecorderD1/play_once?" + wio_link_key
-Wio_link_ranger  = "https://cn.iot.seeed.cc/v1/node/GroveUltraRangerD2/range_in_cm?" + wio_link_key
+Wio_link_recoder = "https://cn.wio.seeed.io/v1/node/GroveRecorderD1/play_once?" + wio_link_key
+Wio_link_ranger  = "https://cn.wio.seeed.io/v1/node/GroveUltraRangerD2/range_in_cm?" + wio_link_key
 weather_desc = "Unknow"                  # General description of the weather
 Last_weather_desc = "UnKnow"
-Last_temp    = None
+Last_temperature = None
 tempOut      = "Unknow"                  # Temperature in C
 pressure     = "Unknow"                  # Pressure in hPa
 humidity     = "Unknow"                  # Humidity %
@@ -51,6 +59,15 @@ Task2        = None
 TimeInterval1 = 10  #  update weather data time interval  unit second
 TimeInterval2 = 10   #  update time data interval          unit second
 TimeOutIndex = 0  # To Count how many times post url error
+#weatherStatus = { 
+#                 "Rain":"???????꣬??Ҫ???˴?ɡ??",\
+#                 "Clouds":"???????ƣ??????һ???ϣ?????и??????顣",\
+#                 "Haze":"??????????????Ҫ???˴?????Ŷ??",\
+#                 "Drizzle":"??????ëë?꣬???????????¸???ͣ??",\
+#                 "Clear":"?????????治????????????ȥԼ???ء?",\
+#                 "Mist":"?????е?????????Ҫ??һ?㣬??????û??",\
+#                 "UnKonw":"?Ҳ?֪??????????????????ô˵???????Ұɡ?"
+#                }
 
 # weather information
 city="shenzhen"
@@ -67,15 +84,15 @@ url = "http://api.openweathermap.org/data/2.5/weather?q=" + city + "&APPID=" + a
 
 
 def updateWeather():
-    global weather_desc,tempOut,pressure,humidity,wind_speed,weather_Status,Last_weather_desc,Last_temp
+    global weather_desc,tempOut,pressure,humidity,wind_speed,weather_Status,Last_weather_desc,Last_temperature
     try:
-    	Last_temp = tempOut
-    	
         jsonurl = urllib.urlopen(url)                      # open the url
         text = json.loads(jsonurl.read())
     
      #Get the Weather info form internet
         Last_weather_desc = weather_desc
+	
+	Last_temperature = tempOut
         weather_desc=text["weather"][0]["main"]            # General description of the weather
         tempOut = float(text["main"]["temp"])-273.15       # Temperature in C
         pressure=text["main"]["pressure"]                  # Pressure in hPa
@@ -83,15 +100,14 @@ def updateWeather():
         wind_speed=text["wind"]["speed"]                   # Wind speed mps
 
         print weather_desc,tempOut,pressure,humidity,wind_speed
-        if Last_temp != tempOut:
-            temp = str(int(tempOut) - 5)
-            Wio_link_test = "https://cn.iot.seeed.cc/v1/node/GroveLedWs2812D0/clear/30/000000?access_token=7833b1f6ce1e66595aa63d7655c779a2"
-            UrlPost(Wio_link_test)  # clear all the rgb led first
+	if tempOut != Last_temperature:
+       	    temp = str(int(tempOut) - 6)
             print temp
-            Wio_link_test = "https://cn.iot.seeed.cc/v1/node/GroveLedWs2812D0/clear/" + temp + " /551100?access_token=7833b1f6ce1e66595aa63d7655c779a2"
+            Wio_link_test = "https://cn.wio.seeed.io/v1/node/GroveLedWs2812D0/clear/30" + " /000000?" + wio_link_key2
+            UrlPost(Wio_link_test)
+            Wio_link_test = "https://cn.wio.seeed.io/v1/node/GroveLedWs2812D0/clear/" + temp + " /080400?" + wio_link_key2
             UrlPost(Wio_link_test)
     # update the temperature rgb led
-    #Wio_link_temperature = "https://cn.iot.seeed.cc/v1/node/GroveLedWs2812D0/clear/" + temp + "/" + RedLed + wio_link_key2
     #UrlPost(Wio_link_temperature)
     except IOError:
         print("Urlib IO Error")
@@ -184,7 +200,6 @@ if __name__ == "__main__":
     #WeatherUrlPost(Weather_Clear_Url)
     #time.sleep(2)
 
-
     #updateLocalWeather()
     while True:
         try:
@@ -198,7 +213,7 @@ if __name__ == "__main__":
                 #ranger = data_json.get('range_cm')
                 print data_json
                 if data_json.get('range_cm') < 50:
-                    time.sleep(2)
+                    time.sleep(1)
                     result = UrlGet(Wio_link_ranger)
                     if result.status_code == 200:
                         data_json = result.json()
@@ -206,7 +221,9 @@ if __name__ == "__main__":
                             UrlPost(Wio_link_recoder)
                             print("OPen the recoder")
                         print data_json
-						
+
+
+
             time.sleep(5)
         except KeyboardInterrupt:
             Task1.cancel()
